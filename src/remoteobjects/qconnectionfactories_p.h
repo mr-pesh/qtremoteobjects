@@ -58,13 +58,6 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QtRemoteObjects {
-
-static const int dataStreamVersion = QDataStream::Qt_5_6;
-static const QLatin1String protocolVersion("QtRO 1.1");
-
-}
-
 //The Qt servers create QIODevice derived classes from handleConnection.
 //The problem is that they behave differently, so this class adds some
 //consistency.

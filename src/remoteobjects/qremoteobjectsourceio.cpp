@@ -48,8 +48,6 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtRemoteObjects;
-
 QRemoteObjectSourceIo::QRemoteObjectSourceIo(const QUrl &address, QObject *parent)
     : QObject(parent)
     , m_server(QtROServerFactory::instance()->create(address, this))
@@ -159,7 +157,7 @@ void QRemoteObjectSourceIo::onServerRead(QObject *conn)
 {
     // Assert the invariant here conn is of type QIODevice
     ServerIoDevice *connection = qobject_cast<ServerIoDevice*>(conn);
-    QRemoteObjectPacketTypeEnum packetType;
+    QtRemoteObjects::QRemoteObjectPacketTypeEnum packetType;
 
     do {
 
@@ -169,11 +167,11 @@ void QRemoteObjectSourceIo::onServerRead(QObject *conn)
         using namespace QRemoteObjectPackets;
 
         switch (packetType) {
-        case Ping:
+        case QtRemoteObjects::Ping:
             serializePongPacket(m_packet, m_rxName);
             connection->write(m_packet.array, m_packet.size);
             break;
-        case AddObject:
+        case QtRemoteObjects::AddObject:
         {
             bool isDynamic;
             deserializeAddObjectPacket(connection->stream(), isDynamic);
@@ -186,7 +184,7 @@ void QRemoteObjectSourceIo::onServerRead(QObject *conn)
             }
             break;
         }
-        case RemoveObject:
+        case QtRemoteObjects::RemoveObject:
         {
             qRODebug(this) << "RemoveObject" << m_rxName;
             if (m_sourceRoots.contains(m_rxName)) {
@@ -200,7 +198,7 @@ void QRemoteObjectSourceIo::onServerRead(QObject *conn)
             qRODebug(this) << "RemoveObject finished" << m_rxName;
             break;
         }
-        case InvokePacket:
+        case QtRemoteObjects::InvokePacket:
         {
             int call, index, serialId, propertyId;
             deserializeInvokePacket(connection->stream(), call, index, m_rxArgs, serialId, propertyId);

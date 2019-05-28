@@ -61,6 +61,18 @@ const int QRemoteObjectSourceBase::qobjectPropertyOffset = QObject::staticMetaOb
 const int QRemoteObjectSourceBase::qobjectMethodOffset = QObject::staticMetaObject.methodCount();
 static const QByteArray s_classinfoRemoteobjectSignature(QCLASSINFO_REMOTEOBJECT_SIGNATURE);
 
+namespace QMetaObject_ {
+    static bool inherits(const QMetaObject *_this, const QMetaObject *metaObject) Q_DECL_NOEXCEPT
+    {
+        do {
+            if (_this == metaObject) {
+                return true;
+            }
+        } while ((_this = _this->superClass()));
+        return false;
+    }
+}
+
 QByteArray QtPrivate::qtro_classinfo_signature(const QMetaObject *metaObject)
 {
     if (!metaObject)
@@ -102,7 +114,7 @@ QRemoteObjectSourceBase::QRemoteObjectSourceBase(QObject *obj, Private *d, const
             if (QMetaType::typeFlags(property.userType()).testFlag(QMetaType::PointerToQObject)) {
                 auto propertyMeta = QMetaType::metaObjectForType(property.userType());
                 QObject *child = property.read(m_object).value<QObject *>();
-                if (propertyMeta->inherits(&QAbstractItemModel::staticMetaObject)) {
+                if (QMetaObject_::inherits(propertyMeta, &QAbstractItemModel::staticMetaObject)) {
                     const auto modelInfo = api->m_models.at(modelIndex++);
                     QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(child);
                     QAbstractItemAdapterSourceAPI<QAbstractItemModel, QAbstractItemModelSourceAdapter> *modelApi =
@@ -388,7 +400,7 @@ DynamicApiMap::DynamicApiMap(QObject *object, const QMetaObject *metaObject, con
         if (QMetaType::typeFlags(property.userType()).testFlag(QMetaType::PointerToQObject)) {
             auto propertyMeta = QMetaType::metaObjectForType(property.userType());
             QObject *child = property.read(object).value<QObject *>();
-            if (propertyMeta->inherits(&QAbstractItemModel::staticMetaObject)) {
+            if (QMetaObject_::inherits(propertyMeta, &QAbstractItemModel::staticMetaObject)) {
                 const QByteArray name = QByteArray::fromRawData(property.name(),
                                                                 qstrlen(property.name()));
                 const QByteArray infoName = name.toUpper() + QByteArrayLiteral("_ROLES");

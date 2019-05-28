@@ -54,7 +54,6 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtRemoteObjects;
 using namespace QRemoteObjectStringLiterals;
 
 static QString name(const QMetaObject * const mobj)
@@ -821,14 +820,14 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
 {
     using namespace QRemoteObjectPackets;
     ClientIoDevice *connection = qobject_cast<ClientIoDevice*>(obj);
-    QRemoteObjectPacketTypeEnum packetType;
+    QtRemoteObjects::QRemoteObjectPacketTypeEnum packetType;
     Q_ASSERT(connection);
 
     do {
         if (!connection->read(packetType, rxName))
             return;
 
-        if (packetType != Handshake && !m_handshakeReceived) {
+        if (packetType != QtRemoteObjects::Handshake && !m_handshakeReceived) {
             qROPrivWarning() << "Expected Handshake, got " << packetType;
             setLastError(QRemoteObjectNode::ProtocolMismatch);
             connection->close();
@@ -836,7 +835,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
         }
 
         switch (packetType) {
-        case Pong:
+        case QtRemoteObjects::Pong:
         {
             QSharedPointer<QRemoteObjectReplicaImplementation> rep = qSharedPointerCast<QRemoteObjectReplicaImplementation>(replicas.value(rxName).toStrongRef());
             if (rep)
@@ -845,16 +844,16 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
                 replicas.remove(rxName);
             break;
         }
-        case Handshake:
-            if (rxName != QtRemoteObjects::protocolVersion) {
-                qROPrivWarning() << "Protocol Mismatch, closing connection. Got" << rxObjects << "expected" << QtRemoteObjects::protocolVersion;
+        case QtRemoteObjects::Handshake:
+            if (rxName != QLatin1String("QtRO 1.1")) {
+                qROPrivWarning() << "Protocol Mismatch, closing connection. Got" << rxObjects << "expected" << QLatin1String("QtRO 1.1");
                 setLastError(QRemoteObjectNode::ProtocolMismatch);
                 connection->close();
             } else {
                 m_handshakeReceived = true;
             }
             break;
-        case ObjectList:
+        case QtRemoteObjects::ObjectList:
         {
             deserializeObjectListPacket(connection->stream(), rxObjects);
             qROPrivDebug() << "newObjects:" << rxObjects;
@@ -877,7 +876,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case InitPacket:
+        case QtRemoteObjects::InitPacket:
         {
             qROPrivDebug() << "InitPacket-->" << rxName << this;
             QSharedPointer<QConnectedReplicaImplementation> rep = qSharedPointerCast<QConnectedReplicaImplementation>(replicas.value(rxName).toStrongRef());
@@ -892,7 +891,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case InitDynamicPacket:
+        case QtRemoteObjects::InitDynamicPacket:
         {
             qROPrivDebug() << "InitDynamicPacket-->" << rxName << this;
             const QMetaObject *meta = dynamicTypeManager.addDynamicType(connection->stream());
@@ -908,7 +907,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case RemoveObject:
+        case QtRemoteObjects::RemoveObject:
         {
             qROPrivDebug() << "RemoveObject-->" << rxName << this;
             connectedSources.remove(rxName);
@@ -924,7 +923,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case PropertyChangePacket:
+        case QtRemoteObjects::PropertyChangePacket:
         {
             int propertyIndex;
             deserializePropertyChangePacket(connection->stream(), propertyIndex, rxValue);
@@ -947,7 +946,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case InvokePacket:
+        case QtRemoteObjects::InvokePacket:
         {
             int call, index, serialId, propertyIndex;
             deserializeInvokePacket(connection->stream(), call, index, rxArgs, serialId, propertyIndex);
@@ -974,7 +973,7 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case InvokeReplyPacket:
+        case QtRemoteObjects::InvokeReplyPacket:
         {
             int ackedSerialId;
             deserializeInvokeReplyPacket(connection->stream(), ackedSerialId, rxValue);
@@ -987,9 +986,9 @@ void QRemoteObjectNodePrivate::onClientRead(QObject *obj)
             }
             break;
         }
-        case AddObject:
-        case Invalid:
-        case Ping:
+        case QtRemoteObjects::AddObject:
+        case QtRemoteObjects::Invalid:
+        case QtRemoteObjects::Ping:
             qROPrivWarning() << "Unexpected packet received";
         }
     } while (connection->bytesAvailable()); // have bytes left over, so do another iteration
@@ -1666,7 +1665,7 @@ bool QRemoteObjectHostBase::enableRemoting(QObject *object, const QString &name)
 
     const QMetaObject *meta = object->metaObject();
     QString _name = name;
-    QString typeName = getTypeNameAndMetaobjectFromClassInfo(meta);
+    QString typeName = QtRemoteObjects::getTypeNameAndMetaobjectFromClassInfo(meta);
     if (typeName.isEmpty()) { //This is a passed in QObject, use its API
         if (_name.isEmpty()) {
             _name = object->objectName();

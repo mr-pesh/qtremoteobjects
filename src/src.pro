@@ -3,13 +3,8 @@ QT_FOR_CONFIG += network
 CONFIG += ordered
 
 SUBDIRS += \
-    repparser
+    repparser remoteobjects
 
-qtConfig(localserver): {
-    SUBDIRS += \
-        remoteobjects
-}
-
-qtHaveModule(quick) {
+qtHaveModule(remoteobjects) {
     SUBDIRS += imports
 }

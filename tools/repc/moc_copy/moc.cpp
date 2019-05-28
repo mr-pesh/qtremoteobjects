@@ -163,7 +163,7 @@ Type Moc::parseType()
             case SIGNED:
             case UNSIGNED:
                 hasSignedOrUnsigned = true;
-                Q_FALLTHROUGH();
+                /* fall through */
             case CONST:
             case VOLATILE:
                 type.name += lexem();
@@ -197,7 +197,7 @@ Type Moc::parseType()
                 prev();
                 break;
             }
-            Q_FALLTHROUGH();
+            /* fall through */
         case CHAR:
         case SHORT:
         case INT:
@@ -890,7 +890,7 @@ void Moc::parse()
             classHash.insert(def.qualified, def.qualified);
         }
     }
-    for (const auto &n : qAsConst(namespaceList)) {
+    foreach (const auto &n, namespaceList) {
         if (!n.hasQNamespace)
             continue;
         ClassDef def;

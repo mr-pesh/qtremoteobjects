@@ -153,7 +153,7 @@ int main(int argc, char **argv)
             if (outputFile.endsWith(QLatin1Literal(".rep")))
                 mode |= OutRep;
         }
-        Q_FALLTHROUGH();
+        /* fall through */
     case 1:
         inputFile = files.first();
         if (!(mode & (InRep | InSrc))) {

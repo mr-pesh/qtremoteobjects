@@ -49,9 +49,7 @@ Q_LOGGING_CATEGORY(QT_REMOTEOBJECT, "qt.remoteobjects", QtWarningMsg)
 Q_LOGGING_CATEGORY(QT_REMOTEOBJECT_MODELS, "qt.remoteobjects.models", QtWarningMsg)
 Q_LOGGING_CATEGORY(QT_REMOTEOBJECT_IO, "qt.remoteobjects.io", QtWarningMsg)
 
-namespace QtRemoteObjects {
-
-void copyStoredProperties(const QMetaObject *mo, const void *src, void *dst)
+void QtRemoteObjects::copyStoredProperties(const QMetaObject *mo, const void *src, void *dst)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
     if (!src) {
@@ -74,7 +72,7 @@ void copyStoredProperties(const QMetaObject *mo, const void *src, void *dst)
 #endif
 }
 
-void copyStoredProperties(const QMetaObject *mo, const void *src, QDataStream &dst)
+void QtRemoteObjects::copyStoredProperties(const QMetaObject *mo, const void *src, QDataStream &dst)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
     if (!src) {
@@ -93,7 +91,7 @@ void copyStoredProperties(const QMetaObject *mo, const void *src, QDataStream &d
 #endif
 }
 
-void copyStoredProperties(const QMetaObject *mo, QDataStream &src, void *dst)
+void QtRemoteObjects::copyStoredProperties(const QMetaObject *mo, QDataStream &src, void *dst)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
     if (!dst) {
@@ -113,7 +111,5 @@ void copyStoredProperties(const QMetaObject *mo, QDataStream &src, void *dst)
     Q_UNUSED(dst);
 #endif
 }
-
-} // namespace QtRemoteObjects
 
 QT_END_NAMESPACE

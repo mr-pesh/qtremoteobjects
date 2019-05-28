@@ -376,7 +376,7 @@ QString RepCodeGenerator::typeForMode(const ASTProperty &property, RepCodeGenera
     switch (mode) {
     case REPLICA: return property.type + QStringLiteral("Replica*");
     case SIMPLE_SOURCE:
-        Q_FALLTHROUGH();
+        /* fall through */
     case SOURCE: return property.type + QStringLiteral("Source*");
     default: qCritical("Invalid mode");
     }

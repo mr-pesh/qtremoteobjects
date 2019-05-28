@@ -880,9 +880,9 @@ void Generator::generateEnums(int index)
         const EnumDef &e = cdef->enumList.at(i);
         int flags = 0;
         if (cdef->enumDeclarations.value(e.name))
-            flags |= EnumIsFlag;
+            flags |= 0x1; //EnumIsFlag
         if (e.isEnumClass)
-            flags |= EnumIsScoped;
+            flags |= 0x2; //EnumIsScoped
         fprintf(out, "    %4d, 0x%.1x, %4d, %4d,\n",
                  stridx(e.name),
                  flags,

@@ -124,64 +124,64 @@ inline QString tcp() { return QStringLiteral("tcp"); }
 inline QString CLASS() { return QStringLiteral("Class::%1"); }
 inline QString MODEL() { return QStringLiteral("Model::%1"); }
 inline QString QAIMADAPTER() { return QStringLiteral("QAbstractItemModelAdapter"); }
-
 }
 
 Q_DECLARE_LOGGING_CATEGORY(QT_REMOTEOBJECT)
 Q_DECLARE_LOGGING_CATEGORY(QT_REMOTEOBJECT_MODELS)
 Q_DECLARE_LOGGING_CATEGORY(QT_REMOTEOBJECT_IO)
 
-namespace QtRemoteObjects {
+class QtRemoteObjects {
 
-Q_NAMESPACE
+Q_GADGET
 
-Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, const void *src, void *dst);
-Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, const void *src, QDataStream &dst);
-Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, QDataStream &src, void *dst);
+public:
+    static Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, const void *src, void *dst);
+    static Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, const void *src, QDataStream &dst);
+    static Q_REMOTEOBJECTS_EXPORT void copyStoredProperties(const QMetaObject *mo, QDataStream &src, void *dst);
 
-QString getTypeNameAndMetaobjectFromClassInfo(const QMetaObject *& meta);
+    static QString getTypeNameAndMetaobjectFromClassInfo(const QMetaObject *& meta);
 
-template <typename T>
-void copyStoredProperties(const T *src, T *dst)
-{
-    copyStoredProperties(&T::staticMetaObject, src, dst);
-}
+    template <typename T>
+    static void copyStoredProperties(const T *src, T *dst)
+    {
+        copyStoredProperties(&T::staticMetaObject, src, dst);
+    }
 
-template <typename T>
-void copyStoredProperties(const T *src, QDataStream &dst)
-{
-    copyStoredProperties(&T::staticMetaObject, src, dst);
-}
+    template <typename T>
+    static void copyStoredProperties(const T *src, QDataStream &dst)
+    {
+        copyStoredProperties(&T::staticMetaObject, src, dst);
+    }
 
-template <typename T>
-void copyStoredProperties(QDataStream &src, T *dst)
-{
-    copyStoredProperties(&T::staticMetaObject, src, dst);
-}
+    template <typename T>
+    static void copyStoredProperties(QDataStream &src, T *dst)
+    {
+        copyStoredProperties(&T::staticMetaObject, src, dst);
+    }
 
-enum QRemoteObjectPacketTypeEnum
-{
-    Invalid = 0,
-    Handshake,
-    InitPacket,
-    InitDynamicPacket,
-    AddObject,
-    RemoveObject,
-    InvokePacket,
-    InvokeReplyPacket,
-    PropertyChangePacket,
-    ObjectList,
-    Ping,
-    Pong
+    enum QRemoteObjectPacketTypeEnum
+    {
+        Invalid = 0,
+        Handshake,
+        InitPacket,
+        InitDynamicPacket,
+        AddObject,
+        RemoveObject,
+        InvokePacket,
+        InvokeReplyPacket,
+        PropertyChangePacket,
+        ObjectList,
+        Ping,
+        Pong
+    };
+    Q_ENUM(QRemoteObjectPacketTypeEnum)
+
+    enum InitialAction {
+        FetchRootSize,
+        PrefetchData
+    };
+    Q_ENUM(InitialAction)
 };
-
-enum InitialAction {
-    FetchRootSize,
-    PrefetchData
-};
-Q_ENUM_NS(InitialAction)
-
-}
 
 QT_END_NAMESPACE
 

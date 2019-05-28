@@ -1,4 +1,3 @@
 TEMPLATE = subdirs
-qtConfig(commandlineparser): {
-    SUBDIRS += repc
-}
+
+SUBDIRS += repc

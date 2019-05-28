@@ -45,8 +45,6 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtRemoteObjects;
-
 namespace QRemoteObjectPackets {
 
 void serializeProperty(DataStreamPacket &ds, const QRemoteObjectSourceBase *source, int internalIndex)
@@ -93,14 +91,14 @@ QVariant deserializedProperty(const QVariant &in, const QMetaProperty &property)
 
 void serializeHandshakePacket(DataStreamPacket &ds)
 {
-    ds.setId(Handshake);
-    ds << QString(protocolVersion);
+    ds.setId(QtRemoteObjects::Handshake);
+    ds << QString(QLatin1String("QtRO 1.1"));
     ds.finishPacket();
 }
 
 void serializeInitPacket(DataStreamPacket &ds, const QRemoteObjectRootSource *source)
 {
-    ds.setId(InitPacket);
+    ds.setId(QtRemoteObjects::InitPacket);
     ds << source->name();
     serializeProperties(ds, source);
     ds.finishPacket();
@@ -158,7 +156,7 @@ void deserializeInitPacket(QDataStream &in, QVariantList &values)
 
 void serializeInitDynamicPacket(DataStreamPacket &ds, const QRemoteObjectRootSource *source)
 {
-    ds.setId(InitDynamicPacket);
+    ds.setId(QtRemoteObjects::InitDynamicPacket);
     ds << source->name();
     serializeDefinition(ds, source);
     serializeProperties(ds, source);
@@ -227,7 +225,7 @@ void serializeDefinition(QDataStream &ds, const QRemoteObjectSourceBase *source)
 
 void serializeAddObjectPacket(DataStreamPacket &ds, const QString &name, bool isDynamic)
 {
-    ds.setId(AddObject);
+    ds.setId(QtRemoteObjects::AddObject);
     ds << name;
     ds << isDynamic;
     ds.finishPacket();
@@ -240,7 +238,7 @@ void deserializeAddObjectPacket(QDataStream &ds, bool &isDynamic)
 
 void serializeRemoveObjectPacket(DataStreamPacket &ds, const QString &name)
 {
-    ds.setId(RemoveObject);
+    ds.setId(QtRemoteObjects::RemoveObject);
     ds << name;
     ds.finishPacket();
 }
@@ -248,7 +246,7 @@ void serializeRemoveObjectPacket(DataStreamPacket &ds, const QString &name)
 
 void serializeInvokePacket(DataStreamPacket &ds, const QString &name, int call, int index, const QVariantList &args, int serialId, int propertyIndex)
 {
-    ds.setId(InvokePacket);
+    ds.setId(QtRemoteObjects::InvokePacket);
     ds << name;
     ds << call;
     ds << index;
@@ -279,7 +277,7 @@ void deserializeInvokePacket(QDataStream& in, int &call, int &index, QVariantLis
 
 void serializeInvokeReplyPacket(DataStreamPacket &ds, const QString &name, int ackedSerialId, const QVariant &value)
 {
-    ds.setId(InvokeReplyPacket);
+    ds.setId(QtRemoteObjects::InvokeReplyPacket);
     ds << name;
     ds << ackedSerialId;
     ds << value;
@@ -295,7 +293,7 @@ void serializePropertyChangePacket(QRemoteObjectSourceBase *source, int signalIn
 {
     int internalIndex = source->m_api->propertyRawIndexFromSignal(signalIndex);
     auto &ds = source->d->m_packet;
-    ds.setId(PropertyChangePacket);
+    ds.setId(QtRemoteObjects::PropertyChangePacket);
     ds << source->name();
     ds << internalIndex;
     serializeProperty(ds, source, internalIndex);
@@ -310,7 +308,7 @@ void deserializePropertyChangePacket(QDataStream& in, int &index, QVariant &valu
 
 void serializeObjectListPacket(DataStreamPacket &ds, const ObjectInfoList &objects)
 {
-    ds.setId(ObjectList);
+    ds.setId(QtRemoteObjects::ObjectList);
     ds << objects;
     ds.finishPacket();
 }
@@ -322,14 +320,14 @@ void deserializeObjectListPacket(QDataStream &in, ObjectInfoList &objects)
 
 void serializePingPacket(DataStreamPacket &ds, const QString &name)
 {
-    ds.setId(Ping);
+    ds.setId(QtRemoteObjects::Ping);
     ds << name;
     ds.finishPacket();
 }
 
 void serializePongPacket(DataStreamPacket &ds, const QString &name)
 {
-    ds.setId(Pong);
+    ds.setId(QtRemoteObjects::Pong);
     ds << name;
     ds.finishPacket();
 }

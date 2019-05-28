@@ -50,8 +50,6 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtRemoteObjects;
-
 class QtROFactoryLoader
 {
 public:
@@ -61,29 +59,29 @@ public:
 
 Q_GLOBAL_STATIC(QtROFactoryLoader, loader)
 
-inline bool fromDataStream(QDataStream &in, QRemoteObjectPacketTypeEnum &type, QString &name)
+inline bool fromDataStream(QDataStream &in, QtRemoteObjects::QRemoteObjectPacketTypeEnum &type, QString &name)
 {
     quint16 _type;
     in >> _type;
-    type = Invalid;
+    type = QtRemoteObjects::Invalid;
     switch (_type) {
-    case Handshake: type = Handshake; break;
-    case InitPacket: type = InitPacket; break;
-    case InitDynamicPacket: type = InitDynamicPacket; break;
-    case AddObject: type = AddObject; break;
-    case RemoveObject: type = RemoveObject; break;
-    case InvokePacket: type = InvokePacket; break;
-    case InvokeReplyPacket: type = InvokeReplyPacket; break;
-    case PropertyChangePacket: type = PropertyChangePacket; break;
-    case ObjectList: type = ObjectList; break;
-    case Ping: type = Ping; break;
-    case Pong: type = Pong; break;
+    case QtRemoteObjects::Handshake: type = QtRemoteObjects::Handshake; break;
+    case QtRemoteObjects::InitPacket: type = QtRemoteObjects::InitPacket; break;
+    case QtRemoteObjects::InitDynamicPacket: type = QtRemoteObjects::InitDynamicPacket; break;
+    case QtRemoteObjects::AddObject: type = QtRemoteObjects::AddObject; break;
+    case QtRemoteObjects::RemoveObject: type = QtRemoteObjects::RemoveObject; break;
+    case QtRemoteObjects::InvokePacket: type = QtRemoteObjects::InvokePacket; break;
+    case QtRemoteObjects::InvokeReplyPacket: type = QtRemoteObjects::InvokeReplyPacket; break;
+    case QtRemoteObjects::PropertyChangePacket: type = QtRemoteObjects::PropertyChangePacket; break;
+    case QtRemoteObjects::ObjectList: type = QtRemoteObjects::ObjectList; break;
+    case QtRemoteObjects::Ping: type = QtRemoteObjects::Ping; break;
+    case QtRemoteObjects::Pong: type = QtRemoteObjects::Pong; break;
     default:
         qCWarning(QT_REMOTEOBJECT_IO) << "Invalid packet received" << type;
     }
-    if (type == Invalid)
+    if (type == QtRemoteObjects::Invalid)
         return false;
-    if (type == ObjectList)
+    if (type == QtRemoteObjects::ObjectList)
         return true;
     in >> name;
     return true;
@@ -92,7 +90,7 @@ inline bool fromDataStream(QDataStream &in, QRemoteObjectPacketTypeEnum &type, Q
 ClientIoDevice::ClientIoDevice(QObject *parent)
     : QObject(parent), m_isClosing(false), m_curReadSize(0)
 {
-    m_dataStream.setVersion(dataStreamVersion);
+    m_dataStream.setVersion(QDataStream::Qt_5_6);
 }
 
 ClientIoDevice::~ClientIoDevice()
@@ -113,7 +111,7 @@ void ClientIoDevice::disconnectFromServer()
     emit shouldReconnect(this);
 }
 
-bool ClientIoDevice::read(QRemoteObjectPacketTypeEnum &type, QString &name)
+bool ClientIoDevice::read(QtRemoteObjects::QRemoteObjectPacketTypeEnum &type, QString &name)
 {
     qCDebug(QT_REMOTEOBJECT_IO) << "ClientIODevice::read()" << m_curReadSize << bytesAvailable();
 
@@ -171,14 +169,14 @@ QSet<QString> ClientIoDevice::remoteObjects() const
 ServerIoDevice::ServerIoDevice(QObject *parent)
     : QObject(parent), m_isClosing(false), m_curReadSize(0)
 {
-    m_dataStream.setVersion(dataStreamVersion);
+    m_dataStream.setVersion(QDataStream::Qt_5_6);
 }
 
 ServerIoDevice::~ServerIoDevice()
 {
 }
 
-bool ServerIoDevice::read(QRemoteObjectPacketTypeEnum &type, QString &name)
+bool ServerIoDevice::read(QtRemoteObjects::QRemoteObjectPacketTypeEnum &type, QString &name)
 {
     qCDebug(QT_REMOTEOBJECT_IO) << "ServerIODevice::read()" << m_curReadSize << bytesAvailable();
 

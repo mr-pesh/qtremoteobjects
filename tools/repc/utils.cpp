@@ -98,14 +98,14 @@ static QVector<FunctionDef> cleanedSignalList(const ClassDef &cdef)
 {
     auto ret = cdef.signalList;
     QVector<int> positions;
-    for (const PropertyDef &prop :  qAsConst(cdef.propertyList)) {
+    foreach (const PropertyDef &prop, cdef.propertyList) {
         if (prop.notifyId != -1) {
             Q_ASSERT(prop.notify == ret.at(prop.notifyId).name);
             positions.push_back(prop.notifyId);
         }
     }
     std::sort(positions.begin(), positions.end(), highToLowSort);
-    for (int pos : qAsConst(positions))
+    foreach (int pos, positions)
         ret.removeAt(pos);
     return ret;
 }
@@ -113,7 +113,7 @@ static QVector<FunctionDef> cleanedSignalList(const ClassDef &cdef)
 static QVector<FunctionDef> cleanedSlotList(const ClassDef &cdef)
 {
     auto ret = cdef.slotList;
-    for (const PropertyDef &prop : qAsConst(cdef.propertyList)) {
+    foreach (const PropertyDef &prop, cdef.propertyList) {
         if (!prop.write.isEmpty()) {
             auto it = ret.begin();
             while (it != ret.end()) {

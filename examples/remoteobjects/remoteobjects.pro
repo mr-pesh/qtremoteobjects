@@ -7,7 +7,7 @@ SUBDIRS = \
     modelviewserver \
     simpleswitch
 
-qtHaveModule(quick) {
+qtHaveModule(remoteobjects) {
     SUBDIRS += \
         plugins \
         clientapp
